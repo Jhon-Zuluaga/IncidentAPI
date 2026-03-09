@@ -40,13 +40,17 @@ public class CategoryController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] UpdateCategoryDto dto)
-    {
-        if(!ModelState.IsValid) return BadRequest(ModelState);
-        var updated = await _CategoryService.UpdateAsync(id, dto);
-        if(updated == null) return NotFound($"Categoria con id {id} no encontrada");
-        return Ok(updated);
-    }
+public async Task<IActionResult> Update(int id, [FromBody] UpdateCategoryDto dto)
+{
+    if (!ModelState.IsValid) return BadRequest(ModelState);
+
+    if (string.IsNullOrWhiteSpace(dto.Name))
+        return BadRequest("Debes enviar al menos un campo para actualizar");
+
+    var updated = await _CategoryService.UpdateAsync(id, dto);
+    if (updated == null) return NotFound($"Categoría con id {id} no encontrada");
+    return Ok(updated);
+}
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)

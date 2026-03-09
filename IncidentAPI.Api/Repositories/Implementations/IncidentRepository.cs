@@ -45,6 +45,7 @@ public class IncidentRepository : IIncidentRepository
         if (existing == null) return null;
 
         existing.Title = incident.Title ?? existing.Title;
+        existing.Description = incident.Description != string.Empty ? incident.Description : existing.Description;
         existing.Status = incident.Status ?? existing.Status;
         existing.CategoryId = incident.CategoryId != 0 ? incident.CategoryId : existing.CategoryId;
 

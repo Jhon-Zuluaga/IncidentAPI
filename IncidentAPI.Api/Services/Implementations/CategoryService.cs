@@ -53,21 +53,25 @@ public class CategoryService : ICategoryService
     }
 
     public async Task<CategoryDto?> UpdateAsync(int id, UpdateCategoryDto dto)
+{
+    // Si el nombre está vacío o es nulo no actualiza
+    if (string.IsNullOrWhiteSpace(dto.Name))
+        return null;
+
+    var category = new Category
     {
-        var category = new Category
-        {
-            Name = dto.Name ?? string.Empty,
-        };
+        Name = dto.Name
+    };
 
-        var updated = await _CategoryRepository.UpdateAsync(id, category);
-        if (updated == null) return null;
+    var updated = await _CategoryRepository.UpdateAsync(id, category);
+    if (updated == null) return null;
 
-        return new CategoryDto
-        {
-            Id = updated.Id,
-            Name = updated.Name,
-        };
-    }
+    return new CategoryDto
+    {
+        Id = updated.Id,
+        Name = updated.Name
+    };
+}
 
     public async Task<bool> DeleteAsync(int id)
     {

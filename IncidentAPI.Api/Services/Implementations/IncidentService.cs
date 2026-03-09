@@ -8,10 +8,17 @@ namespace IncidentAPI.Api.Services.Implementations;
 public class IncidentService : IIncidentService
 {
     private readonly IIncidentRepository _IncidentRepository;
+    private readonly IUserRepository _UserRepository;
+    private readonly ICategoryRepository _CategoryRepository;
 
-    public IncidentService(IIncidentRepository IncidentRepository)
+    public IncidentService(
+       IIncidentRepository incidentRepository,
+       IUserRepository userRepository,
+       ICategoryRepository categoryRepository)
     {
-        _IncidentRepository = IncidentRepository;
+        _IncidentRepository = incidentRepository;
+        _UserRepository = userRepository;
+        _CategoryRepository = categoryRepository;
     }
 
     public async Task<IEnumerable<IncidentDto>> GetAllAsync()
@@ -52,6 +59,15 @@ public class IncidentService : IIncidentService
 
     public async Task<IncidentDto> CreateAsync(CreateIncidentDto dto)
     {
+        // Verificar que el usuario existe
+        var user = await _UserRepository.GetByIdAsync(dto.UserId);
+        if (user == null)
+            throw new Exception($"No existe un usuario con id {dto.UserId}");
+
+        // Verificar que la categoría existe
+        var category = await _CategoryRepository.GetByIdAsync(dto.CategoryId);
+        if (category == null)
+            throw new Exception($"No existe una categoría con id {dto.CategoryId}");
         var incident = new Incident
         {
             Title = dto.Title,

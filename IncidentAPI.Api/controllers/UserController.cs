@@ -27,7 +27,7 @@ public class UserController : ControllerBase
     public async Task<IActionResult> GetById(int id)
     {
         var user = await _userService.GetByIdAsync(id);
-        if (User == null) return NotFound($"Usuario con id {id} no encontrado");
+        if (user == null) return NotFound($"Usuario con id {id} no encontrado");
         return Ok(user);
     }
 
