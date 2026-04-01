@@ -43,9 +43,12 @@ builder.Services.AddSwaggerGen(c =>
 /* Conecta entity framework core con SQLite
     Crea el archivo incidents.db si no existe
 */ 
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite("Data Source=incidents.db"));
+// builder.Services.AddDbContext<AppDbContext>(options =>
+//     options.UseSqlite("Data Source=incidents.db"));
 
+// Conecta POSTGRESQL 
+builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 /* Registor de repositories con AddScoped
     AddScoped significa que crea una instancia nueva por cada 

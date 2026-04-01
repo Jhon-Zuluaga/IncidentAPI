@@ -16,7 +16,7 @@ public class Incident
     [Required]
     public string Status { get; set; } = "abierto";
 
-    public DateTime CreatedAt { get; set; } = DateTime.Now;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     [Required]
     [ForeignKey("User")]

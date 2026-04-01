@@ -14,7 +14,7 @@ public class Comment
     [Required]
     public string Author { get; set; } = string.Empty;
 
-    public DateTime CreatedAt { get; set; } = DateTime.Now;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     [Required]
     [ForeignKey("Incident")]
