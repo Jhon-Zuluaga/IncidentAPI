@@ -4,6 +4,9 @@ using IncidentAPI.Api.Services.Interfaces;
 
 namespace IncidentAPI.Api.Controllers;
 
+/// <summary>
+/// Gestión de Incidentes
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class IncidentController : ControllerBase
@@ -15,6 +18,12 @@ public class IncidentController : ControllerBase
         _IncidentService = IncidentService;
     }
 
+    /// <summary>
+    /// Obtiene todos los incidentes
+    /// </summary>
+    /// <returns>Lista de incidentes</returns>
+    /// <response code="200">Retorna la lista</response>
+    /// <response code="404">No hay incidentes registrados</response>
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
@@ -23,6 +32,13 @@ public class IncidentController : ControllerBase
         return Ok(incidents);
     }
 
+    /// <summary>
+    /// Obtiene un incidente por su ID
+    /// </summary>
+    /// <param name="id">ID del incidente</param>
+    /// <returns>Incidente encontrado</returns>
+    /// <response code="200">Retorna el incidente</response>
+    /// <response code="404">Incidente no encontrado</response>
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
@@ -31,6 +47,13 @@ public class IncidentController : ControllerBase
         return Ok(incident);
     }
 
+    /// <summary>
+    /// Crea un nuevo incidente
+    /// </summary>
+    /// <param name="id">Datos del incidente a crear</param>
+    /// <returns>Incidente creado</returns>
+    /// <response code="201">Incidente creado correctamente</response>
+    /// <response code="404">Datos inválidos</response>
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateIncidentDto dto)
     {
@@ -39,15 +62,31 @@ public class IncidentController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
     }
 
+    /// <summary>
+    /// Actualiza un incidente existente
+    /// </summary>
+    /// <param name="id">ID del incidente a actualizar</param>
+    /// <param name="dto">Datos a actualizar</param>
+    /// <returns>Incidente actualizado</returns>
+    /// <response code="200">Incidente actualizado correctamente</response>
+    /// <response code="400">Datos inválidos o sin campos para actualizar</response>
+    /// <response code="404">Incidente no encontrado</response>
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, [FromBody] UpdateIncidentDto dto)
     {
-        if(!ModelState.IsValid) return BadRequest(ModelState);
+        if (!ModelState.IsValid) return BadRequest(ModelState);
         var updated = await _IncidentService.UpdateAsync(id, dto);
-        if(updated == null) return NotFound($"Incidente con id {id} no encontrado");
+        if (updated == null) return NotFound($"Incidente con id {id} no encontrado");
         return Ok(updated);
     }
 
+    /// <summary>
+    /// Elimina un incidente por su ID
+    /// </summary>
+    /// <param name="id">ID del incidente a eliminar</param>
+    /// <returns>Mensaje de confirmación</returns>
+    /// <response code="200">Incidente eliminado correctamente</response>
+    /// <response code="404">Incidente no encontrado</response>
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {

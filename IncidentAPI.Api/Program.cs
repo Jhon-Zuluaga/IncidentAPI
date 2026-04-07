@@ -69,11 +69,26 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IIncidentService, IncidentService>();
 builder.Services.AddScoped<ICommentService, CommentService>();
 
+// Habilitar CORS para que el navegador no bloquee peticiones:
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
+
 var app = builder.Build();
 
 // Activa Middleware global de errores
 // Debe ir primero para atrapar cualquier error
 app.UseMiddleware<ErrorHandlingMiddleware>();
+
+// CORS Evitar errores
+app.UseCors();
 
 // Activa Swagger solo en entorno desarrollo
 // En produccion no se expone a la documentación por seguridad
