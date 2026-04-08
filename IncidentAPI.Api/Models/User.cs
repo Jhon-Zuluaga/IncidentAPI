@@ -12,5 +12,8 @@ public class User
     [Required]
     public string Email { get; set; } = string.Empty;
 
+    [Required]
+    public string PasswordHash { get; set; } = string.Empty;
+
     public ICollection<Incident> Incidents { get; set; } = new List<Incident>();
 }

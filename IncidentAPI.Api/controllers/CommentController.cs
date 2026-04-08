@@ -1,12 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
 using IncidentAPI.Api.DTOs.Comment;
 using IncidentAPI.Api.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace IncidentAPI.Api.Controllers;
 
 /// <summary>
 /// Gestión de Comentarios
 /// </summary>
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class CommentController : ControllerBase

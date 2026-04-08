@@ -1,12 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
 using IncidentAPI.Api.DTOs.User;
 using IncidentAPI.Api.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace IncidentAPI.Api.Controllers;
 
 /// <summary>
 /// Gestión de Usuarios
 /// </summary>
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class UserController : ControllerBase
@@ -54,6 +56,7 @@ public class UserController : ControllerBase
     /// <returns>Usuario creado</returns>
     /// <response code="201">Usuario creado correctamente</response>
     /// <response code="404">Datos inválidos</response>
+    [AllowAnonymous]
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateUserDto dto)
     {

@@ -31,7 +31,7 @@ public class UserRepository : IUserRepository
         return user;
     }
 
-    public async Task<User?> UpdateAsync (int id, User user)
+    public async Task<User?> UpdateAsync(int id, User user)
     {
         var existing = await _context.Users.FindAsync(id);
         if (existing == null) return null;
@@ -43,7 +43,8 @@ public class UserRepository : IUserRepository
         return existing;
     }
 
-    public async Task<bool> DeleteAsync(int id){
+    public async Task<bool> DeleteAsync(int id)
+    {
         var existing = await _context.Users.FindAsync(id);
         if (existing == null) return false;
 
@@ -51,6 +52,10 @@ public class UserRepository : IUserRepository
         await _context.SaveChangesAsync();
         return true;
     }
-        
-    
+
+    public async Task<User?> GetByEmailAsync(string email)
+    {
+        return await _context.Users
+            .FirstOrDefaultAsync(u => u.Email == email);
+    }
 }

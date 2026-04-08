@@ -43,7 +43,8 @@ public class UserService : IUserService
         var user = new User
         {
             Name = dto.Name,
-            Email = dto.Email
+            Email = dto.Email,
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password)
         };
 
         var created = await _userRepository.CreateAsync(user);
@@ -78,5 +79,13 @@ public class UserService : IUserService
     public async Task<bool> DeleteAsync(int id)
     {
         return await _userRepository.DeleteAsync(id);
+    }
+
+    public async Task<User?> ValidateCredentialsAsync(string email, string password)
+    {
+        var user = await _userRepository.GetByEmailAsync(email);
+        if (user == null) return null;
+
+        return BCrypt.Net.BCrypt.Verify(password, user.PasswordHash) ? user : null;
     }
 }
