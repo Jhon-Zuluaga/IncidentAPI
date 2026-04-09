@@ -1,9 +1,10 @@
+using IncidentAPI.Api.Repositories.Interfaces;
 using IncidentAPI.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 /// <summary>
-/// Controlador encargado de la autenticación de usuarios (Login y logout)
+/// Controlador encargado de la autenticación de usuarios (Login, logout, reset y forgot password)
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
@@ -11,6 +12,8 @@ public class AuthController : ControllerBase
 {
     private readonly IUserService _userService;
     private readonly IJwtService _jwtService;
+    private readonly IEmailService _emailService;
+    private readonly IUserRepository _userRepository;
     private readonly IConfiguration _config;
 
     /// <summary>
@@ -19,10 +22,12 @@ public class AuthController : ControllerBase
     /// <param name="userService">Servicio para validar usuarios</param>
     /// <param name="jwtService">Servicio para generar tokens JWT</param>
     /// <param name="config">Configuración de la aplicación</param>
-    public AuthController(IUserService userService, IJwtService jwtService, IConfiguration config)
+    public AuthController(IUserService userService, IJwtService jwtService, IEmailService emailService, IUserRepository userRepository, IConfiguration config)
     {
         _userService = userService;
         _jwtService = jwtService;
+        _emailService = emailService;
+        _userRepository = userRepository;
         _config = config;
     }
 
@@ -76,5 +81,69 @@ public class AuthController : ControllerBase
         Response.Cookies.Delete("jwt");
         
         return Ok(new { message = "Sesión cerrada"});
+    }
+
+    /// <summary>
+    /// Envía codigo de recuperación al correo del usuario si existe.
+    /// </summary>
+    /// <param name="dto">Contien el email del usuario</param>
+    /// <returns>
+    /// <response code="200">Mensaje indicando que se enviaron instrucciones</response>
+    /// </returns>
+    [HttpPost("forgot-password")]
+    [AllowAnonymous]
+    public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto dto)
+    {
+        var user = await _userRepository.GetByEmailAsync(dto.Email);
+
+        //Siempre devuelve Ok para no revelar si el email existe o no
+        if(user == null)
+            return Ok(new {message = "Si el correo existe recibirás un email con instrucciones"});
+
+        // Generar token de 6 digitos y expiración
+        var token = new Random().Next(100000, 999999).ToString();
+
+        // Guardar token y expiración
+        user.ResetToken = token;
+        user.ResetTokenExpiry = DateTime.UtcNow.AddMinutes(15);
+        await _userRepository.UpdateAsync(user.Id, user);
+
+        try
+        {
+            // Enviar correo con el token
+            await _emailService.SendPasswordResetAsync(user.Email, user.Name, token);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error enviando correo: {ex.Message}");
+        }
+
+        return Ok (new {message = "Si el correo existe recibirás un email con instrucciones."});
+    }
+
+     /// <summary>
+    /// Permite establecer la contraseña usando token válido
+    /// </summary>
+    /// <param name="dto">Contiene email, token y nueva contraseña</param>
+    /// <returns>
+    /// <response code="200">Mensaje indicando el resultado</response>
+    /// </returns>
+    [HttpPost("reset-password")]
+    [AllowAnonymous]
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto dto)
+    {
+        var user = await _userRepository.GetByEmailAsync(dto.Email);
+
+        // Validar token y expiración
+        if(user == null || user.ResetToken != dto.Token || user.ResetTokenExpiry < DateTime.UtcNow)
+            return BadRequest(new {message = "Token inválido o expirado"});
+        
+        // Actualizar contraseña y limpiar token
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
+        user.ResetToken = null;
+        user.ResetTokenExpiry = null;
+        await _userRepository.UpdateAsync(user.Id, user);
+
+        return Ok(new {message = "Contraseña actualizada correctamente"});
     }
 }

@@ -1,5 +1,11 @@
 namespace IncidentAPI.Api.DTOs.Comment;
 
+/*
+    DTO -> Se usa para exponer solo los datos necesarios
+           No incluye logica ni datos sensibles
+*/
+
+// DTO que representa un comentario (datos que se envian al cliente)
 public class CommentDto
 {
     public int Id { get; set; }

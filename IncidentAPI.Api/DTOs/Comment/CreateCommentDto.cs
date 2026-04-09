@@ -2,6 +2,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace IncidentAPI.Api.DTOs.Comment;
 
+/*
+    Se usa cuando el cliente crea un comentario
+    Incluye validaciones para asegurar datos correctos
+*/
+
+// DTO para crear un nuevo comentario
 public class CreateCommentDto
 {
     [Required]

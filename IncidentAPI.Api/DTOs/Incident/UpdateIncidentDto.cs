@@ -2,6 +2,13 @@ using System.ComponentModel.DataAnnotations;
 
 namespace IncidentAPI.Api.DTOs.Incident;
 
+
+/*
+    Se usa en updates (PUT/PATCH)
+    Permite modificar solo los campos necesarios con validaciones
+*/
+
+// DTO para actualizar un incidente existente
 public class UpdateIncidentDto
 {
     [MinLength(3, ErrorMessage = "El titulo debe tener al menos 3 caracteres")]

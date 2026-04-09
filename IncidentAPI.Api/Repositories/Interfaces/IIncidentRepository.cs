@@ -2,6 +2,12 @@ using IncidentAPI.Api.Models;
 
 namespace IncidentAPI.Api.Repositories.Interfaces;
 
+/*
+    Repository -> Se encarga de la comunicación con la base de datos
+                  Solo define que operaciones existen, no como se implementan   
+*/
+
+// Interfaz que define las operaciones de acceso a datos para incidentes
 public interface IIncidentRepository
 {
     Task<IEnumerable<Incident>> GetAllAsync();

@@ -2,6 +2,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace IncidentAPI.Api.DTOs.User;
 
+/*
+    Se usa cuando el cliente crea un usuario
+    Incluye validaciones para asegurar datos correctos
+*/
+
+// DTO para crear un nuevo usuario
 public class CreateUserDto
 {
     [Required]

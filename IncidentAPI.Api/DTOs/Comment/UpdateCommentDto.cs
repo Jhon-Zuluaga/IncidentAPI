@@ -2,6 +2,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace IncidentAPI.Api.DTOs.Comment;
 
+/*
+    Se usa en Updates (PUT/PATCH)
+    Permite modificar los datos del comentario con validaciones
+*/
+
+// DTO para actualizar un comentario existente
 public class UpdateCommentDto
 {
     [Required]

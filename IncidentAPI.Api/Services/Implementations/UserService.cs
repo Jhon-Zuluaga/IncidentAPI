@@ -5,6 +5,15 @@ using IncidentAPI.Api.Services.Interfaces;
 
 namespace IncidentAPI.Api.Services.Implementations;
 
+/*
+    Este service:
+        - Maneja lógica de negocio
+        - Convierte User -> DTO
+        - Usa el repository para acceder a la BD
+        - Encripta y valida contraseñas (JWT)
+*/
+
+// Implementación de la lógica de negocio para usuarios
 public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
@@ -16,7 +25,10 @@ public class UserService : IUserService
 
     public async Task<IEnumerable<UserDto>> GetAllAsync()
     {
+        // Obtener usuarios desde el repositorio
         var users = await _userRepository.GetAllAsync();
+
+        // Convierte entidades (User) a DTOs
         return users.Select(u => new UserDto
         {
             Id = u.Id,
@@ -27,9 +39,11 @@ public class UserService : IUserService
 
     public async Task<UserDto?> GetByIdAsync(int id)
     {
+        // Buscar un usuario por id
         var user = await _userRepository.GetByIdAsync(id);
         if (user == null) return null;
 
+        // Mapear a DTo 
         return new UserDto
         {
             Id = user.Id,
@@ -40,15 +54,19 @@ public class UserService : IUserService
 
     public async Task<UserDto> CreateAsync(CreateUserDto dto)
     {
+        // Crear entidad User a partir del DTO
         var user = new User
         {
             Name = dto.Name,
             Email = dto.Email,
+            // Encriptar contraseña antes de guardar (JWT)
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password)
         };
 
+        // Guardar en BD
         var created = await _userRepository.CreateAsync(user);
 
+        // Retornar DTO
         return new UserDto
         {
             Id = created.Id,
@@ -59,15 +77,18 @@ public class UserService : IUserService
 
     public async Task<UserDto?> UpdateAsync(int id, UpdateUserDto dto)
     {
+        // Crear objeto con datos a actualizar
         var user = new User
         {
             Name = dto.Name ?? string.Empty,
             Email = dto.Email ?? string.Empty
         };
 
+        // Actualizar en BD
         var updated = await _userRepository.UpdateAsync(id, user);
         if (updated == null) return null;
 
+        // Retornar DTO actualizado
         return new UserDto
         {
             Id = updated.Id,
@@ -78,14 +99,17 @@ public class UserService : IUserService
 
     public async Task<bool> DeleteAsync(int id)
     {
-        return await _userRepository.DeleteAsync(id);
+        // Eliminar usuario
+        return await _userRepository.DeleteAsync(id); 
     }
 
     public async Task<User?> ValidateCredentialsAsync(string email, string password)
     {
+        // Buscar usuario por email
         var user = await _userRepository.GetByEmailAsync(email);
         if (user == null) return null;
 
+        // Verificar contraseña encriptada
         return BCrypt.Net.BCrypt.Verify(password, user.PasswordHash) ? user : null;
     }
 }

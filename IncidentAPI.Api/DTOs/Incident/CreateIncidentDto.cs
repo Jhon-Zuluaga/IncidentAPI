@@ -2,6 +2,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace IncidentAPI.Api.DTOs.Incident;
 
+/*
+    Se usa cuando el cliente crea un incidente
+    Incluye validaciones para asegurar datos correctos
+*/
+
+// DTO para crear un nuevo incidente
 public class CreateIncidentDto
 {
     [Required]

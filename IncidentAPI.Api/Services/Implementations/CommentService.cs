@@ -5,6 +5,15 @@ using IncidentAPI.Api.Services.Interfaces;
 
 namespace IncidentAPI.Api.Services.Implementations;
 
+
+/*
+    Este service:
+        - Maneja logica de negocio
+        - Convierte comment -> DTO
+        - Usa el repository para acceder a la BD
+*/
+
+// Implementacion de la logica de negocio para comentarios
 public class CommentService : ICommentService
 {
     private readonly ICommentRepository _commentRepository;
@@ -16,7 +25,10 @@ public class CommentService : ICommentService
 
     public async Task<IEnumerable<CommentDto>> GetAllByIncidentIdAsync(int incidentId)
     {
+        // Obtener comentarios por incidente
         var comments = await _commentRepository.GetAllByIncidentIdAsync(incidentId);
+
+        // Convertir a DTO
         return comments.Select(c => new CommentDto
         {
             Id = c.Id,
@@ -29,9 +41,11 @@ public class CommentService : ICommentService
 
     public async Task<CommentDto?> GetByIdAsync(int id)
     {
+        // Buscar comentario por ID
         var comment = await _commentRepository.GetByIdAsync(id);
         if (comment == null) return null;
 
+        // Mapear a DTO
         return new CommentDto
         {
             Id = comment.Id,
@@ -44,6 +58,7 @@ public class CommentService : ICommentService
 
     public async Task<CommentDto> CreateAsync(CreateCommentDto dto)
     {
+        // Crear entidad Comment
         var comment = new Comment
         {
             Content = dto.Content,
@@ -51,8 +66,10 @@ public class CommentService : ICommentService
             IncidentId = dto.IncidentId
         };
 
+        // Guardar en la BD
         var created = await _commentRepository.CreateAsync(comment);
 
+        // Retornar el DTO
         return new CommentDto
         {
             Id = created.Id,
@@ -65,15 +82,18 @@ public class CommentService : ICommentService
 
     public async Task<CommentDto?> UpdateAsync(int id, UpdateCommentDto dto)
     {
+        // Crear entidad con datos a actualizar
         var comment = new Comment
         {
             Content = dto.Content ?? string.Empty,
             Author = dto.Author ?? string.Empty
         };
 
+        // Actualizar en BD
         var updated = await _commentRepository.UpdateAsync(id, comment);
         if (updated == null) return null;
 
+        // Retornar DTO
         return new CommentDto
         {
             Id = updated.Id,
@@ -86,6 +106,7 @@ public class CommentService : ICommentService
 
     public async Task<bool> DeleteAsync(int id)
     {
+        // Eliminar comentario
         return await _commentRepository.DeleteAsync(id);
     }
 }

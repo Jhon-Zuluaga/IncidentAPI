@@ -1,5 +1,12 @@
 namespace IncidentAPI.Api.DTOs.Incident;
 
+/* 
+     DTO -> Se usa para exponer solo los datos necesarios
+            (Incluye datos relacionados usuario y categoria)
+            No incluye logica ni datos sensibles
+*/
+
+// DTO que representa un incidente (datos que se envian al cliente)
 public class IncidentDto
 {
      public int Id { get; set; }

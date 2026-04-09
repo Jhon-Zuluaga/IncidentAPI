@@ -107,6 +107,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         });
 
 
+
+builder.Services.AddScoped<IEmailService, EmailService>();  // 
+
 // Habilitar CORS para que el navegador no bloquee peticiones:
 builder.Services.AddCors(options =>
 {
