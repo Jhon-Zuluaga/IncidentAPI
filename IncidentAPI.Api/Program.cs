@@ -155,7 +155,7 @@ app.MapControllers();
 
 /* Crea y aplica migraciones al iniciar la aplicacion
    Si la base de datos no existe, la crea, si tiene migraciones
-   pedneintes las aplicac
+   pedneintes las aplica
 */
 using (var scope = app.Services.CreateScope())
 {

@@ -42,4 +42,5 @@ public class Incident
     
     // Relación: un incidente puede tener muchos comentarios
     public ICollection<Comment> Comments { get; set; } = new List<Comment>();
+    public ICollection<Attachment> Attachments { get; set; } = new List<Attachment>();
 }

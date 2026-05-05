@@ -10,6 +10,7 @@ public class AppDbContext : DbContext
         public DbSet<Category> Categories { get; set; }
         public DbSet<Incident> Incidents { get; set; }
         public DbSet<Comment> Comments { get; set; }
+        public DbSet<Attachment> Attachments { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -26,6 +27,12 @@ public class AppDbContext : DbContext
             new Category { Id = 2, Name = "Software"},
             new Category { Id = 3, Name = "Red"}
         );
+
+        modelBuilder.Entity<Attachment>()
+        .HasOne(a => a.Incident)
+        .WithMany(i => i.Attachments)
+        .HasForeignKey(a => a.IncidentId)
+        .OnDelete(DeleteBehavior.Cascade); // Si se borra el incidente, se borran sus archivos
     }
     
 }
