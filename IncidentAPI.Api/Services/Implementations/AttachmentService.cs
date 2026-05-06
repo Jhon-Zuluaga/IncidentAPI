@@ -50,7 +50,8 @@ public class AttachmentService : IAttachmentService
         var storedFileName = $"{Guid.NewGuid()}{extension}";
 
         // Crear la carpeta uploads si no existe
-        var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads");
+        var webRoot = _env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+        var uploadsFolder = Path.Combine(webRoot, "uploads");
         Directory.CreateDirectory(uploadsFolder);
 
         // Guardar archivo en disco

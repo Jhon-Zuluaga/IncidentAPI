@@ -64,6 +64,9 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IIncidentRepository, IncidentRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
+builder.Services.AddScoped<IAttachmentRepository, AttachmentRepository>();
+
+
 
 /* Registro de Services con AddScoped
     El controller llama al service, el service llama al repository
@@ -73,6 +76,7 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IIncidentService, IncidentService>();
 builder.Services.AddScoped<ICommentService, CommentService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<IAttachmentService, AttachmentService>();
 
 // ── JWT ──────────────────────────────────────────────────────────
 
@@ -148,6 +152,9 @@ app.UseAuthentication();
 
 // Activa sistema de autorizacion (Necesario aunque no haya JWT)
 app.UseAuthorization();
+
+// .NET sirva los archivos estaticos desde wwwroot/uploads/;
+app.UseStaticFiles();
 
 // Mapea las rutas de los controllers automaticamente
 // Por ejemplo: UserController /api/user
