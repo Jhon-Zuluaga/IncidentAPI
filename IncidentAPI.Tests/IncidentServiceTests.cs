@@ -8,51 +8,69 @@ namespace IncidentAPI.Tests;
 
 public class IncidentServiceTests
 {
-    private readonly Mock<IIncidentRepository> _mockRepo;
+   private readonly Mock<IIncidentRepository> _mockRepo;
+    private readonly Mock<IUserRepository> _mockUserRepo;
+    private readonly Mock<ICategoryRepository> _mockCategoryRepo;
+    private readonly Mock<IEmailService> _mockEmailService;
     private readonly IncidentService _service;
 
     public IncidentServiceTests()
     {
-        _mockRepo = new Mock<IIncidentRepository>();
-        _service = new IncidentService(_mockRepo.Object);
+        _mockRepo         = new Mock<IIncidentRepository>();
+        _mockUserRepo     = new Mock<IUserRepository>();
+        _mockCategoryRepo = new Mock<ICategoryRepository>();
+        _mockEmailService = new Mock<IEmailService>();
 
+        _service = new IncidentService(
+            _mockRepo.Object,
+            _mockUserRepo.Object,
+            _mockCategoryRepo.Object,
+            _mockEmailService.Object
+        );
     }
 
     [Fact]
-    public async Task CreateAsync_VaidadData_ReturnsIncident()
+public async Task CreateAsync_VaidadData_ReturnsIncident()
+{
+    var dto = new CreateIncidentDto
     {
-        var dto = new CreateIncidentDto
-        {
-            Title = "Error en el servidor",
-            Status = "abierto",
-            UserId = 1,
-            CategoryId = 1
+        Title = "Error en el servidor",
+        Status = "abierto",
+        UserId = 1,
+        CategoryId = 1
+    };
 
-        };
+    var createdIncident = new Incident
+    {
+        Id = 1,
+        Title = dto.Title,
+        Status = dto.Status,
+        UserId = dto.UserId,
+        CategoryId = dto.CategoryId,
+        User = new User { Id = 1, Name = "Admin", Email = "admin@est.com" },
+        Category = new Category { Id = 1, Name = "Hardware" }
+    };
 
-        var createdIncident = new Incident
-        {
-            Id = 1,
-            Title = dto.Title,
-            Status = dto.Status,
-            UserId = dto.UserId,
-            CategoryId = dto.CategoryId,
-            User = new User { Id = 1, Name = "Admin", Email = "admin@est.com"},
-            Category = new Category { Id = 1, Name = "Hardware"}
-        };
 
-        _mockRepo.Setup(r => r.CreateAsync(It.IsAny<Incident>()))
-            .ReturnsAsync(createdIncident);
+    _mockUserRepo.Setup(r => r.GetByIdAsync(1))
+        .ReturnsAsync(new User { Id = 1, Name = "Admin", Email = "admin@est.com" });
 
-        _mockRepo.Setup(r => r.GetByIdAsync(1))
-            .ReturnsAsync(createdIncident);
+    _mockCategoryRepo.Setup(r => r.GetByIdAsync(1))
+        .ReturnsAsync(new Category { Id = 1, Name = "Hardware" });
+   
 
-        var result = await _service.CreateAsync(dto);
+    _mockRepo.Setup(r => r.CreateAsync(It.IsAny<Incident>()))
+        .ReturnsAsync(createdIncident);
 
-        Assert.NotNull(result);
-        Assert.Equal("Error en el servidor", result.Title);
-        Assert.Equal("abierto", result.Status);
-        Assert.Equal(1, result.UserId);
+    _mockRepo.Setup(r => r.GetByIdAsync(1))
+        .ReturnsAsync(createdIncident);
+
+    var result = await _service.CreateAsync(dto);
+
+    Assert.NotNull(result);
+    Assert.Equal("Error en el servidor", result.Title);
+    Assert.Equal("abierto", result.Status);
+    Assert.Equal(1, result.UserId);
     }
 
     [Fact]
