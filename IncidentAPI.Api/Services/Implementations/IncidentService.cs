@@ -18,7 +18,7 @@ namespace IncidentAPI.Api.Services.Implementations;
 public class IncidentService : IIncidentService
 {
     private readonly IIncidentRepository _IncidentRepository;
-    private readonly IUserRepository _UserRepository;
+        private readonly IUserRepository _UserRepository;
     private readonly ICategoryRepository _CategoryRepository;
     private readonly IEmailService _EmailService;
 

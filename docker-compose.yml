@@ -5,7 +5,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: incidentdb 
+      POSTGRES_DB: incidentdb
     ports:
       - "5433:5432"
     volumes:
@@ -15,7 +15,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-      
+
   api:
     build: .
     container_name: incidentapi
@@ -24,9 +24,15 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=incidentdb;Username=postgres;Password=postgres
+      - Jwt__Key=e5ed6032-51a7-48cd-b097-02c3192881f9
+      - Jwt__Issuer=IncidentAPI
+      - Jwt__Audience=IncidentAPIUsers
+      - Jwt__ExpirationMinutes=60
+      - Email__Username=jhonxyleh@gmail.com
+      - Email__Password=punw dfre nrnq oheg
     depends_on:
       db:
-        condition: service_healthy  
+        condition: service_healthy
 
 volumes:
   pgdata:
