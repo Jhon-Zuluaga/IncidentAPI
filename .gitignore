@@ -3,6 +3,10 @@
 ##
 ## Get latest from `dotnet new gitignore`
 
+# ignore files attachment
+IncidentAPI.Api/wwwroot/uploads/*
+!IncidentAPI.Api/wwwroot/uploads/.gitkeep
+
 # dotenv files
 .env
 
